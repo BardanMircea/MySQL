@@ -1,0 +1,1014 @@
+1- Installation d'un serveur
+
+	- WINDOWS ==> XAMPP / WAMP
+    	https://www.apachefriends.org/fr/index.html
+        https://www.wampserver.com/
+        
+        
+    - MAC ==> MAMP
+    	https://www.mamp.info/en/downloads/
+    
+    
+    - LINUX ==> LAMP
+    
+--------------------------------------------------------
+Désintallation :
+	panneau de configuration :
+    	programmes
+        
+        
+    Vérifier à la racine du dique dur C s'il y a le dossier 
+
+-------------------------------------------------------
+2- Allumer le serveur
+
+	- xampp, ouvrir la panel control
+    	- allumer les modules Apache et MySql
+        - ouvrir l'interface PhpMyAdmin ==> cliquer sur le bouton "Admin" du module MySQL
+        
+    
+    - wamp, allumer le serveur (Afficher les icônes cachées ==> en bas à droite du PC)
+    	- W (rouge si éteint, vert si allumé, orange si à moitié allumé)
+        - "Démarrer les services"
+        - PhpMyAdmin (cliquer pour ouvrir)
+        -> connexion (identifiant: root, et pas de mot de passe)
+        
+        
+    - mamp, application MAMP
+    	- ouverture du modal
+        - en haut à droite: start/stop
+        - webstart => onglet => accordéon : MySQL : lien pour PhpMyAdmin 
+  
+---------------------------------------------------------
+https://sql.sh/
+PhpMyAdmin
+
+=> regroupement des bases de données (le nom de la BDD doit être unique sur PhpMyAdmin)
+
+Une BDD est composée de tables/entity/tableau (le nom de la table doit être unique dans la bdd)
+
+Une table est composée de champs/colonnes (le nom du champ dans la table doit être unique)
+
+
+
+Pour créer une base de données:
+	En haut à gauche, "Nouvelle base de données"
+    	Définir le nom de la base de données (sans accent, sans espace, sans caractères spéciaux)
+        conseil tout en minuscule (plusieurs_mots / camelcase)
+        NOM UNIQUE !!!
+        encodage: utfmb4_general_ci ou utf_general_ci
+        
+Une fois créée, on retrouve la BDD dans le listing à gauche sur l'interface
+       
+    
+conception d'une table
+dénomination de la table (nom unique)
+	Structure
+    un champ :
+    	- nom
+        - type
+        - taille
+        - nullable
+        
+   Clé Primaire (Primary key : PK)
+   une PK est un integer (nombre entier) auto incrémenté (+1)
+   une valeur unique (= référence unique)
+   pour les relations, la PK sera utilisé dans d'autres tables sous le nom de Foreign Key (clé étrangère) FK
+   
+   type :
+   integer (nombre entier) valeur non obligatoire, si vide valeur = 11
+   double (nombre décimal)
+   varchar (valeur obligatoire, max 255)
+   text valeur non obligatoire
+   date YYYY-mm-dd
+   datetime YYYY-mm-dd HH:ii:ss
+   time HH:ii:ss
+   Y year
+   m month
+   d day
+   H Hour
+   i minute
+   s second
+   
+   boolean (true 1/false 0)
+   enum nécéssite des valeurs à définir
+   
+   
+   taille :
+   pour l'integer, si pas de taille alors taille par défaut 11 (ça veut dire 11 chiffre dans le nombre soit 99 999 	 999 999)
+   pour le varchar, obligation, 255 max
+   
+   date, boolean, pas de tailles
+   
+   
+   null :
+   savoir si la donnée est obligatoire ou non
+   
+   
+   
+   ATTENTION, la virgule est un point
+   
+   une convention est une manière de nommage non obligatoire mais que tous les dev utilisent 
+   
+   exemple pour les clés étrangères (FK) c'est le nom de la table suivi de "_id"
+   
+   ça nous aide à repérer les FK d'un seul coup d'oeil (sinon structure de la table)
+   
+   
+   
+   
+   
+   Les relations,
+   
+   une relation est entre 2 tables
+   
+   exemple Produit et Categorie
+   
+   un produit appartient à une catégorie
+   et une catégorie peut regrouper plusieurs produits
+   
+   sur la table Produit, on aura une colonne définissant la catégorie de chaque produit
+   
+   pour ça, première étape :
+   créer la colonne 
+   dans celle-ci on y retrouvera une foreign key ça veut un des Id de la table categorie.
+   ==> le type de la colonne est un INTEGER
+   
+   
+   Pour être plus précis, une relation est rattachée par des colonnes des table
+   dans notre relation, on va relier la colonne id (clé primaire) de la table categorie à la colonne categorie_id (clé étrangère) de la table produit
+   
+   
+   Il est impossible de définir une valeur autre que l'un des id de la table categorie
+   
+   
+   Pour créer une relation, la table doit avoir comme moteur de stockage la valeur InnoDB
+   
+   Il faut définir la FK dans la table produit 
+   onglet "structure"
+   		--> "vue relationnelle"
+        
+     il faut RELIER les 2 champs :
+     
+     - définir la colonne (de la table produit)
+     - bdd
+     - les tables de la bdd (categorie)
+     - colonne (automatiquement la PK)
+     
+     
+     
+     (aller sur la bdd et sur l'onglet concepteur pour visualiser la bdd sous forme de schéma avec les traits de relations)
+     
+     s'il y a relation, on verra une 'clé grise' dans structure à côté de categorie_id
+     quant il s'agit d'une clé primaire la clé est jaune
+     
+     
+     
+     Restrictions des relations 
+     	- pour modifier
+        - pour supprimer
+        
+     - Restrict => impossible de supprimer une clé primaire si elle est utilisée comme clé étrangère dans une autre table
+     - NULL => en supprimant la clé primaire, les clés étrangères deviennent NULL
+     - CASCADE => en supprimant la clé primaire, les données des autres tables qui sont en relations avec cette clé primaire, seront également supprimées.
+
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+
+COURS 3
+
+Installation de Git
+https://git-scm.com/downloads
+
+
+Sur github
+
+Créer un repository (= projet/dossier)
+
+ligne de commande (rattacher un dossier de votre pc au repo)
+
+uniquement pour l'initialisation
+git init
+git add *
+git commit -m "first commit"
+git remote add origin https://github.com/VotreCompte/VotreRepository.git
+git push -u origin main/master
+
+
+-------------------------------------------------------------------------------------
+git status => comparer le dossier du pc au repo pour savoir s'il y a des changements
+
+git add *
+* = all ==> tous les fichiers qui ont subis un changement sont pris en compte
+sinon on peut choisir un fichier précisément : git add fichier.ext
+
+
+git commit -m "Nom du commit"
+
+
+git push ==> on envoie le commit sur github
+
+
+---------------------------------------------------------------------------------------
+GITHUB DESKTOP
+
+
+Créer un repository 
+par défaut il créé dans le dossier documents de votre PC un dossier GITHUB
+le nom du repository deviendra le nom du dossier dans le dossier GITHUB
+
+
+sur l'interface
+
+à gauche, se trouvera la liste des fichiers qui ont subi un changement (fichier créé, supprimé, modifié)
+
+en dessous le commit (toujours définir un nom de commit, la description est facultative)
+pour lancer le commit, cliquer sur le bouton bleu
+
+
+puis sur la partie de droite, un bouton "publish" (==> push)
+
+
+----------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+
+
+-- COURS MySQL
+
+
+-- LIGNE DE COMMANDE DEPUIS LE TERMINAL
+
+
+-- MYSQL par ligne de commande
+
+-- - xampp
+
+-- 	sur la panel control
+--     il y a un terminal 'shell'
+    
+--     arborescence : C/xampp
+    
+--     ligne de commande : mysql -uroot
+    
+    
+    
+-- - wamp
+-- 	cliquer sur le "W" ==> MySQL =>  Console MySQL
+--     --> sql>
+
+
+
+-- - mamp
+
+-- 	Application / utilitaire / terminal
+    
+--     /Applications/MAMP/Library/bin/mysql -uroot -p
+    
+--     mot de passe : root
+    
+    
+--     --> sql>
+
+
+
+
+
+
+-- Les lignes de commandes se terminent obligatoirement par un POINT VIRGULE
+-- Ce point virgule permet de lancer l'instruction
+-- Quand il n'y a pas de point virgule, il n'y aura pas d'erreur, une nouvelle ligne apparaitra "->"
+
+
+-- Liste des BDD sur PhpMyAdmin
+SHOW DATABASES;
+
+-- Se déplacer dans une BDD
+USE NomDeLaBDD
+
+
+-- Dans une BDD, si on veut connaître laquelle
+SELECT DATABASE();
+
+-- il existe des fonctions sur MySQL, syntaxe d'une fonction nom()
+
+
+-- exemple sur une fonction
+-- Définition:  une fonction regroupe un algorythme qui sera éxécuté uniquement si on appelle la fonction
+-- une fonction peut avoir des arguments 
+
+-- Création de la fonction 
+-- function calcul($nb1, $nb2)
+-- {
+--     return $nb1 * $nb2;
+-- }
+
+-- appeler la fonction 
+-- calcul(5,4) 
+-- valeur retournée : 20
+
+
+-- Créer la base de données nommé doranco
+CREATE DATABASE doranco;
+
+
+-- Créer une table (on se trouve dans une bdd)
+
+CREATE TABLE eleve (
+    id int(11) NOT NULL auto_increment,
+    nom VARCHAR(50) NOT NULL,
+    PRIMARY KEY(id)
+);
+
+
+-- ALTER (modification)
+
+-- AJOUTER une colonne
+ALTER TABLE eleve ADD prenom VARCHAR(50) NULL;
+
+-- MODIFIER le nom et le type/taille d'une colonne
+ALTER TABLE eleve CHANGE nom name VARCHAR(100);
+
+
+-- exo : ajouter le champ sexe ENUM 
+ALTER TABLE eleve ADD sexe enum("m","f") NOT NULL;
+
+
+-- MODIFIER le type/taille d'une colonne
+ALTER TABLE eleve MODIFY prenom INT(5) NOT NULL;
+
+
+-- SUPPRIMER une colonne
+ALTER TABLE eleve DROP COLUMN prenom;
+
+
+-- DESCRIPTION DE LA TABLE eleve
+DESC eleve;
+-- +-------+---------------+------+-----+---------+----------------+
+-- | Field | Type          | Null | Key | Default | Extra          |
+-- +-------+---------------+------+-----+---------+----------------+
+-- | id    | int(11)       | NO   | PRI | NULL    | auto_increment |
+-- | name  | varchar(100)  | YES  |     | NULL    |                |
+-- | sexe  | enum('m','f') | NO   |     | NULL    |                |
+-- +-------+---------------+------+-----+---------+----------------+
+
+-- Vider la table eleve
+TRUNCATE eleve;
+
+-- Supprimer la table
+DROP TABLE eleve;
+
+-- Supprimer la bdd doranco
+DROP DATABASE doranco;
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+
+4. -- exo
+CREATE DATABASE societe;
+USE societe;
+CREATE TABLE user(
+    id INT(11) NOT NULL auto_increment,
+    nom VARCHAR(50) NOT NULL,
+    prenom VARCHAR(50) NOT NULL,
+    email VARCHAR(50) NOT NULL,
+    mdp VARCHAR(255) NOT NULL,
+    adresse VARCHAR(100) NOT NULL,
+    complement VARCHAR(255) NULL,
+    cp INT(5) NOT NULL,
+    ville VARCHAR(100) NOT NULL,
+    pays VARCHAR(100) NOT NULL,
+    telephone VARCHAR(13) NULL,
+    PRIMARY KEY(id)
+);
+
+
+CREATE TABLE voiture(
+    id INT(11) NOT NULL auto_increment,
+    immatriculation VARCHAR(15) NULL,
+    marque VARCHAR(50) NOT NULL,
+    modele VARCHAR (50) NOT NULL,
+    annee INT(4) NOT NULL,
+    carburant enum("essence", "diesel", "electrique", "GPL") NOT NULL,
+    type_vitesse enum('automatique', 'manuelle') NOT NULL,
+    nb_vitesse INT(1) NOT NULL,
+    nb_porte INT(1) NOT NULL,
+    couleur VARCHAR(30) NOT NULL,
+    controle_technique BOOLEAN NOT NULL,
+    places INT(1) NOT NULL,
+    type enum('suv', "cabriolet", "citadine", "4x4", "sport", "utilitaire") NOT NULL,
+    prix DOUBLE not null, 
+    kilometrage INT (7) NOT NULL,
+    
+
+
+
+
+
+    PRIMARY KEY(id)
+);
+
+
+
+- id
+- immatriculation
+- marque
+- modele
+- annee
+- carburant
+- boite de vitesse
+- couleur
+- nb portes
+- CT 
+- places
+- type 
+- prix 
+- kilometre
+- nb chevaux
+- fiscaux
+- etat
+- photo
+- description 
+- option
+- volant
+
+--------------------------------------------------------------------
+
+-- REQUETES
+-- Il existe 4 requêtes :
+    -- AFFICHER  ==> SELECT
+    -- AJOUTER   ==> INSERT INTO
+    -- MODIFIER  ==> UPDATE
+    -- SUPPRIMER ==> DELETE
+
+
+
+-- SELECT
+
+-- Afficher toute la table employes
+SELECT id_employes, nom, prenom, date_embauche, salaire, service, sexe FROM employes;
+SELECT * FROM employes;
+-- * ==> ALL, tous les champs de la table
+-- FROM ==> dans quelle table (rappel : une bdd est composée de tables)
+
+
+-- Afficher tous les prénoms des employés
+SELECT prenom FROM employes;
+
+-- FROM employes ==> de toute la table
+
+
+-- WHERE (précision) ==> "lorsque"
+-- WHERE nomDuChamp = valeur 
+-- les chaînes de caractères sont à écrire entre quote simple ou double
+-- les nombres peuvent s'écrire sans quote
+
+-- Afficher l'employé Damien Durant, id_employes = 802
+
+SELECT * FROM employes WHERE id_employes = 802;
+SELECT prenom, service  FROM employes WHERE service = "commercial";
+
+----------------------------------------------------------------------------------
+SELECT -- la ou les données que la requête doit retourner (champ(s) fonction ...)
+       -- on sépare les champs par une virgule
+
+FROM -- table, les données proviennent d'une table
+
+WHERE -- précison sur la requête, on retourne des données par rapport à quoi ?----------------------------------------------------------------------------------
+-- Afficher les services de la table employes
+SELECT DISTINCT service FROM employes;
+
+-- DISTINCT champ
+-- permet d'afficher les valeurs du champ sans doublon
+--------------------------------------------------------------------------------------------
+
+-- Afficher le nom, le prénom, et le salaire des employés embauchés entre le 1er janvier 2010 et le 31 décembre 2012
+
+SELECT nom, prenom, salaire, date_embauche
+FROM employes
+WHERE date_embauche 
+BETWEEN "2010-01-01"
+AND "2012-12-31";
+
+
+-- entre 100 et 200
+-- BETWEEN 100 AND 200;
+--------------------------------------------------------------------------------------------
+-- PLACEMENT
+
+-- Afficher le(s) prénom(s) dans la table employes lorsque le prénom commençe par la lettre S
+
+SELECT prenom
+FROM employes
+WHERE prenom 
+LIKE "s%";
+
+-- Afficher le(s) prénom(s) dans la table employes lorsque le prénom se termine par la lettre E
+
+SELECT prenom
+FROM employes
+WHERE prenom 
+LIKE "%e";
+
+
+-- Afficher le(s) prénom(s) dans la table employes lorsque le prénom commençe et se termine par la lettre E
+
+SELECT prenom
+FROM employes
+WHERE prenom 
+LIKE "e%e";
+
+-- Afficher le(s) prénom(s) dans la table employes lorsque le prénom contient la lettre E
+
+-- au début, au milieu, à la fin, 
+SELECT prenom
+FROM employes
+WHERE prenom 
+LIKE "%me%";
+
+
+-- LIKE permet de rechercher un ou plusieurs caractères dans la valeur
+-- il faut définir son placement dedans : on utilise le %
+
+
+
+
+-- Afficher le prénom et la date d'embauche des employés embauchés en 2010
+-- sans utiliser BETWEEN
+
+SELECT prenom, date_embauche
+FROM employes
+WHERE date_embauche 
+LIKE "2010%";
+
+SELECT nom, prenom, salaire, date_embauche
+FROM employes
+WHERE date_embauche 
+BETWEEN "2010-01-01"
+AND "2010-12-31";
+
+
+-----------------------------------------------------------------------------------
+-- LES OPERATEURS
+
+--               =         affectation, égal à
+--               !=        différent de
+--               <>        différent de
+
+
+--               IN()      affectation, égal à pour 1 OU PLUSIEURS VALEURS
+--               NOT IN()  différent de             1 OU PLUSIEURS VALEURS
+
+--               <         Strictement inférieur à
+--               >         Strictement supérieur à
+--               <=        Inférieur ou égal
+--               >=        Supérieur ou égal
+
+--               AND       ET
+--               OR        OU
+
+------------------------------------------------------------------------------------
+
+-- Afficher le prénom et le service des employés lorsque le service est commercial
+SELECT prenom, service 
+FROM employes
+WHERE service = "commercial";
+
+
+-- Afficher le prénom et le service des employés lorsque le service n'est pas commercial
+SELECT prenom, service 
+FROM employes
+WHERE service != "commercial";
+
+SELECT prenom, service 
+FROM employes
+WHERE NOT service = "commercial";
+
+
+-- Afficher le prénom et le service des employés lorsque le service est commercial ou informatique
+SELECT prenom, service 
+FROM employes
+WHERE service IN("commercial", "informatique");
+
+-- Afficher le prénom et le service des employés lorsque le service n'est pas commercial ou informatique
+SELECT prenom, service 
+FROM employes
+WHERE service NOT IN("commercial", "informatique");
+
+
+-- Afficher le nom, le prénom, le service et le salaire des employés qui ont un salaire strictement supérieur à 3000 euros
+
+
+SELECT nom, prenom, service, salaire
+FROM employes
+WHERE salaire > 3000;
+
+-- Afficher le nom, le prénom, le service et le salaire des commerciaux qui ont un salaire strictement supérieur à 3000 euros
+
+SELECT nom, prenom, service, salaire
+FROM employes
+WHERE service = "commercial"
+AND salaire > 3000;
+
+
+-- Afficher le nom, le prénom, le service et le salaire des employés qui ont un salaire strictement supérieur à 3000 euros ainsi que les commerciaux
+
+SELECT nom, prenom, service, salaire
+FROM employes
+WHERE salaire > 3000
+OR service = "commercial";
+
+
+----------------------------------------------------------------------------------
+-- ORDONNANCE
+-- Afficher les prénoms, les noms et les service des employés par ordre alphabétique
+
+SELECT prenom, nom, service
+FROM employes 
+ORDER BY prenom;
+
+SELECT prenom, nom, service
+FROM employes 
+ORDER BY prenom ASC;
+
+-----------------------------
+
+SELECT prenom, nom, service
+FROM employes 
+ORDER BY prenom DESC;
+
+-- ORDER BY + champ + sens
+-- 2 sens
+-- ASC endant  (A-Z, croissant)
+-- DESC endant (Z-A, décroissant)
+-- si on ne précise pas le sens, par défaut la valeur est ASC
+
+--> se place toujours après WHERE (sans AND)
+
+
+SELECT prenom, nom, salaire
+FROM employes 
+ORDER BY salaire DESC;
+
+SELECT prenom, nom, salaire, service
+FROM employes 
+ORDER BY service, salaire DESC;
+
+-- Afficher le nom, le prénom, le salaire, le service des commerciaux en les classant par le salaire, de celui qui gagne le plus à celui qui gagne le moins
+
+SELECT nom, prenom, salaire, service
+FROM employes
+WHERE service = "commercial"
+ORDER BY salaire DESC;
+
+-- Afficher le nom, le prénom, le salaire et le service des employés qui sont des commerciaux de sexe feminun ayant un salaire strictement supérieur à 2500
+SELECT nom, prenom, salaire, service
+FROM employes
+WHERE service = "commercial"
+AND sexe = "f"
+AND salaire > 2500;
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+-- LIMITATION
+
+
+-- Afficher les 3 premiers prénoms des employés listé  par ordre alphabétique
+
+
+SELECT prenom
+FROM employes
+ORDER BY prenom
+LIMIT 0,3
+;
+
+
+-- LIMIT permet de limiter un nombre de données
+-- 2 arguments
+
+-- 1e : la position de départ
+-- 2e : nombre de données souhaitées
+
+--             ["kiwi", "fraise", "banane", "abricot"]
+-- position :     0        1         2          3
+-- quantité : 4
+
+-- LA PREMIERE POSITION EST ZERO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+SELECT prenom
+FROM employes
+ORDER BY prenom
+LIMIT 3
+;
+
+-- Si on ne met qu'un seul argument, c'est le 2e "la quantité", le premier est la position, qui par défaut est zéro
+
+
+-- Afficher les prénoms de Emilie à Julien
+-- Emilie Fabrice Guillaume Jean-Pierre Julien
+
+SELECT prenom
+FROM employes
+ORDER BY prenom
+LIMIT 8,5
+;
+
+
+-- Afficher les 5 employés (*) qui gagnent le moins
+SELECT *
+FROM employes
+ORDER BY salaire ASC
+LIMIT 0,5;
+
+
+SELECT *
+FROM employes
+ORDER BY salaire 
+LIMIT 5;
+
+
+-- Afficher l'employé qui a le plus haut salaire
+SELECT *
+FROM employes 
+ORDER BY salaire DESC
+LIMIT 0,1;
+
+
+-------------------------------------------------------------------------------------
+
+SELECT prenom, salaire*12 AS "Salaire annuel"
+FROM employes;
+
+
+-- Si un champ est un nombre, il peut subir des opérations mathématiques / * - +
+-- AS ==> ALIAS : renommer le champ de notre requête
+
+
+-- FONCTIONS PREDEFINIES MYSQL
+
+
+-- Afficher la masse salariale de l'entreprise ()
+
+SELECT SUM(salaire*12) AS "Masse salariale"
+FROM employes;
+
+-- la fonction SUM() permet d'additionner
+
+
+
+-- Afficher la date du jour
+SELECT CURDATE();
+
+
+-- Afficher l'heure du jour
+SELECT CURTIME();
+
+
+-- Afficher la date et l'heure du jour
+SELECT NOW();
+
+
+-- Afficher les employés embauchés entre le 1er janvier 2016 à maintenant 
+SELECT *
+FROM employes
+WHERE date_embauche
+BETWEEN "2016-01-01"
+AND CURDATE();
+
+
+
+
+-- Afficher le salaire moyen des employés
+
+SELECT AVG(salaire)
+FROM employes;
+
+
+-- la fonction AVG() permet de calculer une moyenne
+
+-- la fonction ROUND() permet d'arrondir
+-- 2 arguments :
+-- 1er => nombre à arrondir
+-- 2e => nombre de chiffre après la virgule
+
+-- arrondi au supérieur à partir de 5
+
+SELECT ROUND(    AVG(salaire) , 2       ) AS "Moyenne arrondie à 2 chiffres"
+FROM employes;
+
+
+
+-- Afficher le NOMBRE de femmes dans l'entreprise
+
+SELECT COUNT(*)
+FROM employes
+WHERE sexe = "f";
+
+
+-- COUNT() permet de retourner un nombre (de lignes)
+
+
+-- avec NULL pas de champ = NULL, mais IS NULL ou IS NOT NULL !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+
+SELECT CONCAT("b","a","r","t");
+-- concaténer les arguments (bout à bout)
+
+SELECT CONCAT_WS("/", "b","a","r","t");
+-- concaténer les arguments (bout à bout) MAIS en définissant un séparateur (1er argument)
+
+
+
+SELECT LENGTH("bonjour");
+-- length() permet de compter le nombre de caractères dans une chaîne de caractères
+
+
+SELECT REPLACE('b/a/r/t', "/", "-");
+-- REPLACE() permet de remplacer un caractère par un autre dans une chaîne de caractères
+-- 1e argument : la chaîne de caractère (string)
+-- 2e argument : le caractère à remplacer
+-- 3e argument : le caractère qui remplacer
+
+
+SELECT UPPER("salut"); -- tout en majuscule
+SELECT LOWER("SALUT"); -- tout en minuscule
+
+
+SELECT SUBSTRING('bonjour',1,1); -- b
+SELECT SUBSTRING('bonjour',2); -- onjour
+
+-- permet de récupérer une portion d'une string
+-- 1e : string
+-- 2e : à partir de quelle lettre (1e position : 1)
+-- 3e : quantité de lettres 
+
+
+select 
+  concat(
+    upper(
+      substring(nom,1,1)
+      ),
+    lower(
+      substring(nom,2))
+    )
+FROM
+  employes
+;
+
+
+
+-- Afficher le salaire maximum
+
+SELECT MAX(salaire) AS "Salaire maximum"
+FROM employes;
+
+SELECT salaire
+FROM employes
+ORDER BY salaire DESC
+LIMIT 1;
+
+-- Affiche le salaire minimum
+
+
+SELECT MIN(salaire) AS 'Salaire minimum'
+FROM employes;
+
+
+SELECT salaire
+FROM employes
+ORDER BY salaire 
+LIMIT 1;
+
+
+-- Afficher le prénom de l'employé qui gagne le moins
+
+SELECT prenom
+FROM employes
+ORDER BY salaire
+LIMIT 1;
+
+
+
+SELECT MIN(salaire) FROM employes; -- 1390
+
+
+
+SELECT prenom FROM employes WHERE salaire = 1390;
+
+
+SELECT prenom FROM employes WHERE salaire = 
+    (SELECT MIN(salaire) FROM employes)
+;
+-- requête d'imbrication 
+
+
+
+-- exo : tous les prénoms entre les lettres D et G (D E F G)
+
+
+-- Afficher les services avec leurs nombres d'employés
+
+SELECT service, COUNT(*)
+FROM employes
+GROUP BY service;
+
+-- GROUP BY regroupe "les lignes" par le champ défini après GROUP BY
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- REQUETE D'INSERTION
+-- INSERT INTO
+
+
+INSERT INTO employes (prenom, salaire, date_embauche, service, sexe, nom) VALUES ("bart", 10000, "2018-05-04", "informatique", "m", "lord");
+
+
+-- INSERT INTO + nom de la table
+-- tableau des champs (pas de quote, pas d'ordre des champs)
+-- VALUES
+-- tableau des valeurs (ordre à respecter par rapport au tableau des champs)
+
+-- les valeurs sont positionnées dans les champs respectifs à la position du tableau
+-- il y a autant de champs que de valeurs
+
+
+-- on peut insérer une ligne ou plusieurs
+
+INSERT INTO employes (prenom, salaire, date_embauche, service, sexe, nom) VALUES 
+("bart", 10000, "2018-05-04", "informatique", "m", "lord"),
+("jean", 20000, "2018-05-04", "commercial", "m", "lord");
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- REQUETE DE MODIFICATION
+-- UPDATE
+
+
+
+
+UPDATE employes SET salaire = 10000, nom = "kiwi" WHERE service = "informatique";
+
+-- UPDATE + nom de la table 
+-- SET champ = new valeur (si plusieurs, virgule de séparation)
+-- SANS PRECISION (sans WHERE), toutes les lignes de la table subiront le changement donc penser à préciser votre requête 
+
+UPDATE employes SET salaire = "15"; -- tous les employés auront un salaire de 15 euros
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- REQUETE DE SUPPRESSION
+-- DELETE
+
+
+DELETE FROM employes; -- supprimer toutes les données de la table
+
+DELETE FROM employes WHERE id_employes = 994;
+
+DELETE FROM employes WHERE service = "commercial";
+
+-- penser à la précision de votre suppression
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- TP
+
+
+-- 1 -- Afficher la profession de l'employé 547
+        SELECT service
+        FROM employes
+        WHERE id_employes = 547;
+
+        -- Commercial
+
+
+-- 2 -- Afficher la date d'embauche de Amandine
+        SELECT date_embauche
+        FROM employes
+        WHERE prenom = "amandine";
+
+        -- 2014-01-23
+
+
+-- 3 -- Afficher le nom de famille de Guillaume
+
+        SELECT nom 
+        FROM employes 
+        WHERE prenom = "guillaume";
+
+        -- Miller
+
+        
+
+
+-- 4 -- Afficher le nombre d'employé ayant un id_employes commençant par le chiffre 5
+-- 5 -- Afficher le nombre de commerciaux
+
+
+
+
+
+
+
+
+-- exo : tous les prénoms entre les lettres D et G (D E F G)
