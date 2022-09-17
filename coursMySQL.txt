@@ -662,5 +662,353 @@ FROM employes
 WHERE service = "commercial"
 ORDER BY salaire DESC;
 
+-- Afficher le nom, le prénom, le salaire et le service des employés qui sont des commerciaux de sexe feminun ayant un salaire strictement supérieur à 2500
+SELECT nom, prenom, salaire, service
+FROM employes
+WHERE service = "commercial"
+AND sexe = "f"
+AND salaire > 2500;
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+-- LIMITATION
+
+
+-- Afficher les 3 premiers prénoms des employés listé  par ordre alphabétique
+
+
+SELECT prenom
+FROM employes
+ORDER BY prenom
+LIMIT 0,3
+;
+
+
+-- LIMIT permet de limiter un nombre de données
+-- 2 arguments
+
+-- 1e : la position de départ
+-- 2e : nombre de données souhaitées
+
+--             ["kiwi", "fraise", "banane", "abricot"]
+-- position :     0        1         2          3
+-- quantité : 4
+
+-- LA PREMIERE POSITION EST ZERO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+SELECT prenom
+FROM employes
+ORDER BY prenom
+LIMIT 3
+;
+
+-- Si on ne met qu'un seul argument, c'est le 2e "la quantité", le premier est la position, qui par défaut est zéro
+
+
+-- Afficher les prénoms de Emilie à Julien
+-- Emilie Fabrice Guillaume Jean-Pierre Julien
+
+SELECT prenom
+FROM employes
+ORDER BY prenom
+LIMIT 8,5
+;
+
+
+-- Afficher les 5 employés (*) qui gagnent le moins
+SELECT *
+FROM employes
+ORDER BY salaire ASC
+LIMIT 0,5;
+
+
+SELECT *
+FROM employes
+ORDER BY salaire 
+LIMIT 5;
+
+
+-- Afficher l'employé qui a le plus haut salaire
+SELECT *
+FROM employes 
+ORDER BY salaire DESC
+LIMIT 0,1;
+
+
+-------------------------------------------------------------------------------------
+
+SELECT prenom, salaire*12 AS "Salaire annuel"
+FROM employes;
+
+
+-- Si un champ est un nombre, il peut subir des opérations mathématiques / * - +
+-- AS ==> ALIAS : renommer le champ de notre requête
+
+
+-- FONCTIONS PREDEFINIES MYSQL
+
+
+-- Afficher la masse salariale de l'entreprise ()
+
+SELECT SUM(salaire*12) AS "Masse salariale"
+FROM employes;
+
+-- la fonction SUM() permet d'additionner
+
+
+
+-- Afficher la date du jour
+SELECT CURDATE();
+
+
+-- Afficher l'heure du jour
+SELECT CURTIME();
+
+
+-- Afficher la date et l'heure du jour
+SELECT NOW();
+
+
+-- Afficher les employés embauchés entre le 1er janvier 2016 à maintenant 
+SELECT *
+FROM employes
+WHERE date_embauche
+BETWEEN "2016-01-01"
+AND CURDATE();
+
+
+
+
+-- Afficher le salaire moyen des employés
+
+SELECT AVG(salaire)
+FROM employes;
+
+
+-- la fonction AVG() permet de calculer une moyenne
+
+-- la fonction ROUND() permet d'arrondir
+-- 2 arguments :
+-- 1er => nombre à arrondir
+-- 2e => nombre de chiffre après la virgule
+
+-- arrondi au supérieur à partir de 5
+
+SELECT ROUND(    AVG(salaire) , 2       ) AS "Moyenne arrondie à 2 chiffres"
+FROM employes;
+
+
+
+-- Afficher le NOMBRE de femmes dans l'entreprise
+
+SELECT COUNT(*)
+FROM employes
+WHERE sexe = "f";
+
+
+-- COUNT() permet de retourner un nombre (de lignes)
+
+
+-- avec NULL pas de champ = NULL, mais IS NULL ou IS NOT NULL !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+
+SELECT CONCAT("b","a","r","t");
+-- concaténer les arguments (bout à bout)
+
+SELECT CONCAT_WS("/", "b","a","r","t");
+-- concaténer les arguments (bout à bout) MAIS en définissant un séparateur (1er argument)
+
+
+
+SELECT LENGTH("bonjour");
+-- length() permet de compter le nombre de caractères dans une chaîne de caractères
+
+
+SELECT REPLACE('b/a/r/t', "/", "-");
+-- REPLACE() permet de remplacer un caractère par un autre dans une chaîne de caractères
+-- 1e argument : la chaîne de caractère (string)
+-- 2e argument : le caractère à remplacer
+-- 3e argument : le caractère qui remplacer
+
+
+SELECT UPPER("salut"); -- tout en majuscule
+SELECT LOWER("SALUT"); -- tout en minuscule
+
+
+SELECT SUBSTRING('bonjour',1,1); -- b
+SELECT SUBSTRING('bonjour',2); -- onjour
+
+-- permet de récupérer une portion d'une string
+-- 1e : string
+-- 2e : à partir de quelle lettre (1e position : 1)
+-- 3e : quantité de lettres 
+
+
+select 
+  concat(
+    upper(
+      substring(nom,1,1)
+      ),
+    lower(
+      substring(nom,2))
+    )
+FROM
+  employes
+;
+
+
+
+-- Afficher le salaire maximum
+
+SELECT MAX(salaire) AS "Salaire maximum"
+FROM employes;
+
+SELECT salaire
+FROM employes
+ORDER BY salaire DESC
+LIMIT 1;
+
+-- Affiche le salaire minimum
+
+
+SELECT MIN(salaire) AS 'Salaire minimum'
+FROM employes;
+
+
+SELECT salaire
+FROM employes
+ORDER BY salaire 
+LIMIT 1;
+
+
+-- Afficher le prénom de l'employé qui gagne le moins
+
+SELECT prenom
+FROM employes
+ORDER BY salaire
+LIMIT 1;
+
+
+
+SELECT MIN(salaire) FROM employes; -- 1390
+
+
+
+SELECT prenom FROM employes WHERE salaire = 1390;
+
+
+SELECT prenom FROM employes WHERE salaire = 
+    (SELECT MIN(salaire) FROM employes)
+;
+-- requête d'imbrication 
+
+
+
+-- exo : tous les prénoms entre les lettres D et G (D E F G)
+
+
+-- Afficher les services avec leurs nombres d'employés
+
+SELECT service, COUNT(*)
+FROM employes
+GROUP BY service;
+
+-- GROUP BY regroupe "les lignes" par le champ défini après GROUP BY
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- REQUETE D'INSERTION
+-- INSERT INTO
+
+
+INSERT INTO employes (prenom, salaire, date_embauche, service, sexe, nom) VALUES ("bart", 10000, "2018-05-04", "informatique", "m", "lord");
+
+
+-- INSERT INTO + nom de la table
+-- tableau des champs (pas de quote, pas d'ordre des champs)
+-- VALUES
+-- tableau des valeurs (ordre à respecter par rapport au tableau des champs)
+
+-- les valeurs sont positionnées dans les champs respectifs à la position du tableau
+-- il y a autant de champs que de valeurs
+
+
+-- on peut insérer une ligne ou plusieurs
+
+INSERT INTO employes (prenom, salaire, date_embauche, service, sexe, nom) VALUES 
+("bart", 10000, "2018-05-04", "informatique", "m", "lord"),
+("jean", 20000, "2018-05-04", "commercial", "m", "lord");
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- REQUETE DE MODIFICATION
+-- UPDATE
+
+
+
+
+UPDATE employes SET salaire = 10000, nom = "kiwi" WHERE service = "informatique";
+
+-- UPDATE + nom de la table 
+-- SET champ = new valeur (si plusieurs, virgule de séparation)
+-- SANS PRECISION (sans WHERE), toutes les lignes de la table subiront le changement donc penser à préciser votre requête 
+
+UPDATE employes SET salaire = "15"; -- tous les employés auront un salaire de 15 euros
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- REQUETE DE SUPPRESSION
+-- DELETE
+
+
+DELETE FROM employes; -- supprimer toutes les données de la table
+
+DELETE FROM employes WHERE id_employes = 994;
+
+DELETE FROM employes WHERE service = "commercial";
+
+-- penser à la précision de votre suppression
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- TP
+
+
+-- 1 -- Afficher la profession de l'employé 547
+        SELECT service
+        FROM employes
+        WHERE id_employes = 547;
+
+        -- Commercial
+
+
+-- 2 -- Afficher la date d'embauche de Amandine
+        SELECT date_embauche
+        FROM employes
+        WHERE prenom = "amandine";
+
+        -- 2014-01-23
+
+
+-- 3 -- Afficher le nom de famille de Guillaume
+
+        SELECT nom 
+        FROM employes 
+        WHERE prenom = "guillaume";
+
+        -- Miller
+
+        
+
+
+-- 4 -- Afficher le nombre d'employé ayant un id_employes commençant par le chiffre 5
+-- 5 -- Afficher le nombre de commerciaux
+
+
+
+
+
+
+
 
 -- exo : tous les prénoms entre les lettres D et G (D E F G)
