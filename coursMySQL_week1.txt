@@ -285,8 +285,10 @@ puis sur la partie de droite, un bouton "publish" (==> push)
 SHOW DATABASES;
 
 -- Se déplacer dans une BDD
-USE NomDeLaBDD
+USE NomDeLaBDD;
 
+-- Lister toutes les tables dans la BDD
+SHOW TABLES;
 
 -- Dans une BDD, si on veut connaître laquelle
 SELECT DATABASE();
@@ -470,7 +472,7 @@ SELECT * FROM employes WHERE id_employes = 802;
 SELECT prenom, service  FROM employes WHERE service = "commercial";
 
 ----------------------------------------------------------------------------------
-SELECT -- la ou les données que la requête doit retourner (champ(s) fonction ...)
+SELECT -- la ou les données que la requête doit retourner (champ(s) / fonction ...)
        -- on sépare les champs par une virgule
 
 FROM -- table, les données proviennent d'une table
@@ -525,7 +527,7 @@ LIKE "e%e";
 SELECT prenom
 FROM employes
 WHERE prenom 
-LIKE "%me%";
+LIKE "%e%";
 
 
 -- LIKE permet de rechercher un ou plusieurs caractères dans la valeur
@@ -662,7 +664,7 @@ FROM employes
 WHERE service = "commercial"
 ORDER BY salaire DESC;
 
--- Afficher le nom, le prénom, le salaire et le service des employés qui sont des commerciaux de sexe feminun ayant un salaire strictement supérieur à 2500
+-- Afficher le nom, le prénom, le salaire et le service des employés qui sont des commerciaux de sexe feminin ayant un salaire strictement supérieur à 2500
 SELECT nom, prenom, salaire, service
 FROM employes
 WHERE service = "commercial"
