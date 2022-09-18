@@ -1011,4 +1011,3 @@ DELETE FROM employes WHERE service = "commercial";
 
 
 
--- exo : tous les prénoms entre les lettres D et G (D E F G)
