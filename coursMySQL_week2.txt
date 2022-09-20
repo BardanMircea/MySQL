@@ -1,0 +1,409 @@
+-- Créer une base de données : bibliotheque
+
+
+
+-- créer la table abonne   
+--     - id_abonne (INT(11) AI - PK NOT NULL)
+--     - prenom VARCHAR (255) NOT NULL
+
+
+-- créer la table livre
+--     - id_livre (INT(11) AI - PK NOT NULL)
+--     - auteur VARCHAR (255) NOT NULL
+--     - titre VARCHAR (255) NOT NULL
+    
+
+-- créer la table emprunt
+--     - id_emprunt (INT(11) AI - PK NOT NULL)
+--     - livre_id (INT (11) NOT NULL) RELATION avec id_livre de la table livre 
+--     - abonne_id (INT (11) NOT NULL) RELATION avec id_abonne de la table abonne 
+--     - date_sortie DATE NOT NULL
+--     - date_rendue DATE NULL
+
+
+-- INSERT INTO `abonne` (`id_abonne`, `prenom`) VALUES
+-- (1, 'Guillaume'),
+-- (2, 'Benoit'),
+-- (3, 'Chloe'),
+-- (4, 'Laura');
+
+
+-- INSERT INTO `livre` (`id_livre`, `auteur`, `titre`) VALUES
+-- (100, 'GUY DE MAUPASSANT', 'Une vie'),
+-- (101, 'GUY DE MAUPASSANT', 'Bel-Ami '),
+-- (102, 'HONORE DE BALZAC', 'Le père Goriot'),
+-- (103, 'ALPHONSE DAUDET', 'Le Petit chose'),
+-- (104, 'ALEXANDRE DUMAS', 'La Reine Margot'),
+-- (105, 'ALEXANDRE DUMAS', 'Les Trois Mousquetaires');
+
+
+-- CREATE TABLE `emprunt` (
+--   `id_emprunt` int(11) NOT NULL,
+--   `livre_id` int(11) NOT NULL,
+--   `abonne_id` int(11) NOT NULL,
+--   `date_sortie` date NOT NULL,
+--   `date_rendue` date DEFAULT NULL
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
+
+
+-- RAPPEL :
+-- id_table ==> PK
+-- table_id ==> FK
+
+-- le principe de la bibliothèque est  qu'un abonné puisse       emprunter         des livres
+--                     bdd                   table abonne       table emprunt     table livres
+
+
+-- c'est quoi un emprunt ?
+-- qqun ? abonne
+-- qui emprunt
+-- quoi ? livre
+
+-- date_sortie : date à laquelle l'abonné a emprunté le livre
+-- date_rendue peut être NULL car c'est  la date à laquelle l'abonné va rendre le livre 
+
+
+
+--------------------------------------------------------------------------------------------------
+-- Afficher l'id des livres qui n'ont été rendus
+
+        -- IS NULL / IS NOT NULL
+
+
+        SELECT livre_id 
+        FROM emprunt 
+        WHERE date_rendue IS NULL;
+
+        -- +----------+
+        -- | livre_id |
+        -- +----------+
+        -- |      105 |
+        -- |      100 |
+        -- +----------+
+
+
+-- Afficher le titre des livres qui n'ont pas été rendus
+
+    SELECT titre
+    FROM livre 
+    WHERE id_livre IN (100,105);
+
+
+
+    SELECT titre FROM livre WHERE id_livre IN (
+        SELECT livre_id FROM emprunt WHERE date_rendue IS NULL
+    );
+
+
+    -- +-------------------------+
+    -- | titre                   |
+    -- +-------------------------+
+    -- | Une vie                 |
+    -- | Les Trois Mousquetaires |
+    -- +-------------------------+
+
+    -- la requête d'imbrique permet d'intégrer des requêtes dans des requêtes (sur la même table ou sur des tables différentes (relations))
+    -- la lecture des requêtes commençent par celle qui est la plus imbriquée 
+
+
+    --------------------------------------------------------------------------------------------------------------------------------------
+
+    -- Afficher l'id des abonnés qui n'ont pas rendus les livres
+
+        SELECT abonne_id FROM emprunt WHERE date_rendue IS NULL;
+
+        -- +-----------+
+        -- | abonne_id |
+        -- +-----------+
+        -- |         3 |
+        -- |         2 |
+        -- +-----------+
+
+    -- Afficher le prenom des abonnés qui n'ont pas rendus les livres
+
+
+    SELECT prenom FROM abonne WHERE id_abonne IN(
+        SELECT abonne_id FROM emprunt WHERE date_rendue IS NULL
+    );
+
+
+    -- +--------+
+    -- | prenom |
+    -- +--------+
+    -- | Benoit |
+    -- | Chloe  |
+    -- +--------+
+
+
+    -- Afficher l'id des livres que Chloé a emprunté
+
+
+        -- Afficher l'id de Chloe
+        SELECT id_abonne FROM abonne WHERE prenom = "chloe";
+
+        -- +-----------+
+        -- | id_abonne |
+        -- +-----------+
+        -- |         3 |
+        -- +-----------+
+
+        -- Afficher l'id des livres que l'abonne 3 a emprunté
+        SELECT livre_id FROM emprunt WHERE abonne_id = 3;
+
+
+
+
+                                       --  abonne_id = 3
+        SELECT livre_id FROM emprunt WHERE abonne_id IN (
+            SELECT id_abonne FROM abonne WHERE prenom = "chloe"
+        );
+
+        -- +----------+
+        -- | livre_id |
+        -- +----------+
+        -- |      100 |
+        -- |      105 |
+        -- +----------+
+
+
+-- Afficher les prénoms des abonnés qui ont rendus un livre le 11 décembre 2016
+
+
+
+
+SELECT abonne_id FROM emprunt WHERE date_rendue = "2016-12-11";
+
+    -- +-----------+
+    -- | abonne_id |
+    -- +-----------+
+    -- |         1 |
+    -- +-----------+
+
+
+    SELECT prenom FROM abonne WHERE id_abonne IN(1);
+
+
+    -- +-----------+
+    -- | prenom    |
+    -- +-----------+
+    -- | Guillaume |
+    -- +-----------+
+
+
+    SELECT prenom FROM abonne WHERE id_abonne IN(
+        SELECT abonne_id FROM emprunt WHERE date_rendue = "2016-12-11"
+    );
+
+
+    -- +-----------+
+    -- | prenom    |
+    -- +-----------+
+    -- | Guillaume |
+    -- +-----------+
+
+
+    -- A SAVOIR
+
+    -- WHERE id_abonne = abonne_id
+    -- WHERE abonne_id = id_abonne
+    -- WHERE id_livre = livre_id 
+    -- WHERE livre_id = id_livre
+
+
+
+
+
+    -- Afficher le nombre de livres que Guillaume a emprunté
+
+    SELECT COUNT(*) FROM emprunt WHERE abonne_id = (
+        SELECT id_abonne FROM abonne WHERE prenom = "guillaume"
+    );
+    
+
+    -- 2
+
+
+    SELECT COUNT(*) FROM emprunt WHERE abonne_id = (
+        SELECT id_abonne FROM abonne WHERE prenom = "guillaume"
+    );
+
+
+    -- Afficher les infos des emprunts de l'abonné N°1
+    SELECT * FROM emprunt WHERE abonne_id = 1;
+    -- +------------+----------+-----------+-------------+-------------+
+    -- | id_emprunt | livre_id | abonne_id | date_sortie | date_rendue |
+    -- +------------+----------+-----------+-------------+-------------+
+    -- |          1 |      100 |         1 | 2016-12-07  | 2016-12-11  |
+    -- |          5 |      104 |         1 | 2016-12-15  | 2016-12-30  |
+    -- +------------+----------+-----------+-------------+-------------+
+
+
+    -- Afficher le nombre d'emprunts de l'abonné N°1
+    SELECT COUNT(*) FROM emprunt WHERE abonne_id = 1;
+    -- +----------+
+    -- | COUNT(*) |
+    -- +----------+
+    -- |        2 |
+    -- +----------+
+
+
+    -- Afficher les infos des emprunts de l'abonné qui s'appelle Guillaume
+
+    SELECT * FROM emprunt WHERE abonne_id = ***FOREIGN KEY***
+
+
+    SELECT * FROM abonne WHERE prenom = "guillaume";
+    -- +-----------+-----------+
+    -- | id_abonne | prenom    |
+    -- +-----------+-----------+
+    -- |         1 | Guillaume |
+    -- +-----------+-----------+
+
+    SELECT id_abonne FROM abonne WHERE prenom = "guillaume";
+    -- +-----------+
+    -- | id_abonne |
+    -- +-----------+
+    -- |         1 |
+    -- +-----------+
+    
+    SELECT * FROM emprunt WHERE abonne_id = (SELECT id_abonne FROM abonne WHERE prenom = "guillaume");
+
+
+    SELECT COUNT(*) FROM emprunt WHERE abonne_id IN (
+        SELECT id_abonne FROM abonne WHERE prenom = "guillaume"
+    );
+    -- +----------+
+    -- | COUNT(*) |
+    -- +----------+
+    -- |        2 |
+    -- +----------+
+
+
+    -- Afficher le prenom des abonnés ayant déjà emprunté un livre de l'auteur Alphonse DAUDET
+
+    SELECT id_livre FROM livre WHERE auteur = "Alphonse Daudet";
+    -- +----------+
+    -- | id_livre |
+    -- +----------+
+    -- |      103 |
+    -- +----------+
+
+    SELECT abonne_id FROM emprunt WHERE livre_id IN (103);
+
+    -- +-----------+
+    -- | abonne_id |
+    -- +-----------+
+    -- |         4 |
+    -- +-----------+
+
+    SELECT abonne_id FROM emprunt WHERE livre_id IN (
+        SELECT id_livre FROM livre WHERE auteur = "Alphonse Daudet"
+    );
+
+    SELECT prenom FROM abonne WHERE id_abonne IN(4);
+    -- +--------+
+    -- | prenom |
+    -- +--------+
+    -- | Laura  |
+    -- +--------+
+
+    SELECT prenom FROM abonne WHERE id_abonne IN(
+        SELECT abonne_id FROM emprunt WHERE livre_id IN (
+            SELECT id_livre FROM livre WHERE auteur = "Alphonse Daudet"
+        )
+    );
+
+
+
+-- Afficher le titre du ou des livre(s) que Chloe a emprunté 
+
+
+    SELECT id_abonne FROM abonne WHERE prenom = "chloe";
+    -- +-----------+
+    -- | id_abonne |
+    -- +-----------+
+    -- |         3 |
+    -- +-----------+
+
+
+    SELECT livre_id FROM emprunt WHERE abonne_id IN(3);
+
+    -- +----------+
+    -- | livre_id |
+    -- +----------+
+    -- |      100 |
+    -- |      105 |
+    -- +----------+
+
+    SELECT titre FROM livre WHERE id_livre IN(100,105);
+
+
+    -- +-------------------------+
+    -- | titre                   |
+    -- +-------------------------+
+    -- | Une vie                 |
+    -- | Les Trois Mousquetaires |
+    -- +-------------------------+
+
+
+    SELECT titre FROM livre WHERE id_livre IN(
+        SELECT livre_id FROM emprunt WHERE abonne_id IN (
+            SELECT id_abonne FROM abonne WHERE prenom ="chloe"
+        )
+    );
+
+
+-- Afficher le titre du ou des livre(s) que Chloé n'a pas emprunté 
+
+    SELECT titre, id_livre FROM livre WHERE id_livre NOT IN(
+        SELECT livre_id FROM emprunt WHERE abonne_id IN(
+            SELECT id_abonne FROM abonne WHERE prenom IN ("chloe")
+        )
+    );
+
+    -- +-----------------+----------+
+    -- | titre           | id_livre |
+    -- +-----------------+----------+
+    -- | Bel-Ami         |      101 |
+    -- | Le père Goriot  |      102 |
+    -- | Le Petit chose  |      103 |
+    -- | La Reine Margot |      104 |
+    -- +-----------------+----------+
+
+
+-- Afficher le prénom de l'abonné qui a emprunté le plus de livres (Benoit)
+
+    SELECT prenom FROM abonne WHERE id_abonne = 
+    (
+        SELECT abonne_id FROM emprunt GROUP BY abonne_id ORDER BY COUNT(*) DESC LIMIT 1
+    );
+
+
+
+-- Afficher l'id de l'abonné qui a emprunté le plus de livres (table emprunt) 2
+
+SELECT COUNT(*),abonne_id FROM emprunt GROUP BY abonne_id;
+    -- +----------+-----------+
+    -- | COUNT(*) | abonne_id |
+    -- +----------+-----------+
+    -- |        2 |         1 |
+    -- |        3 |         2 |
+    -- |        2 |         3 |
+    -- |        1 |         4 |
+    -- +----------+-----------+
+
+
+    --2
+
+    
+    SELECT abonne_id FROM emprunt GROUP BY abonne_id ORDER BY COUNT(*) DESC LIMIT 1;
+  
+
+    -- +--------+
+    -- | prenom |
+    -- +--------+
+    -- | Benoit |
+    -- +--------+

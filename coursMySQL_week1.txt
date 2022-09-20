@@ -1002,13 +1002,305 @@ DELETE FROM employes WHERE service = "commercial";
 
 
 -- 4 -- Afficher le nombre d'employé ayant un id_employes commençant par le chiffre 5
+          SELECT COUNT(id_employes)
+          FROM employes
+          WHERE id_employes 
+          LIKE "5%";
+
+          -- 3
+
 -- 5 -- Afficher le nombre de commerciaux
 
+        SELECT COUNT(service)
+        FROM employes
+        WHERE service = "commercial";
+
+
+
+-- 6 -- Afficher le salaire moyen des informaticiens
+
+        SELECT ROUND(AVG(salaire), 2) AS "Salaire moyen des informaticiens"
+        FROM employes
+        WHERE service = "informatique";
+
+        --  2616.6667 
+        --  2616.67 (arrondi)
+        
+-- 7 -- Afficher les 5 premiers employés après avoir classé leurs noms de famille par ordre alphabétique 
+
+        SELECT nom
+        FROM employes
+        ORDER BY nom 
+        LIMIT 5;
+
+
+        -- +----------+
+        -- | nom      |
+        -- +----------+
+        -- | Blanchet |
+        -- | Chevel   |
+        -- | Collier  |
+        -- | Cottet   |
+        -- | Desprez  |
+        -- +----------+
+
+
+
+-- 8 -- Afficher le coût de tous les employés sur le service commercial sur une année
+
+          SELECT SUM(salaire*12) AS "Cout du service commercial"
+          FROM employes
+          WHERE service = "commercial";
+
+          -- 184 200
+
+
+
+-- 9 -- Afficher le salaire moyen par service  (nom du service | somme )
+
+      SELECT service, ROUND( AVG(salaire), 2) AS "Salaire moyen par service"
+      FROM employes
+      GROUP BY service;
+
+
+      -- +---------------+---------------------------+
+      -- | service       | Salaire moyen par service |
+      -- +---------------+---------------------------+
+      -- | assistant     |                   1775.00 |
+      -- | commercial    |                   2558.33 |
+      -- | communication |                   2100.00 |
+      -- | comptabilite  |                   2900.00 |
+      -- | direction     |                   4750.00 |
+      -- | informatique  |                   2616.67 |
+      -- | juridique     |                   3550.00 |
+      -- | production    |                   2225.00 |
+      -- | secretariat   |                   1496.67 |
+      -- +---------------+---------------------------+
+
+-- 10 -- Afficher le nombre de recrutement sur l'année 2010
+
+      SELECT COUNT(id_employes)
+      FROM employes
+      WHERE date_embauche 
+      BETWEEN "2010-01-01" AND "2010-12-31";
+
+    -- ou
+
+      SELECT COUNT(id_employes)
+      FROM employes
+      WHERE date_embauche 
+      LIKE "2010%";
+      
+    -- 2
+
+
+
+-- 11 -- Afficher le salaire moyen appliqué lors des recrutements sur la période 2011 à 2014
+
+
+        SELECT ROUND(AVG(salaire),2)
+        FROM employes
+        WHERE date_embauche
+        BETWEEN "2011-01-01" AND "2014-12-31";
+
+        -- 2453.08
 
 
 
 
+-- 12 -- Afficher le nombre de service dans l'entreprise
+
+        SELECT COUNT(DISTINCT service) 
+        FROM employes;
+
+        -- 9
 
 
 
--- exo : tous les prénoms entre les lettres D et G (D E F G)
+-- 13 -- Afficher le nom et le prénom de tous les employés sauf ceux des services production et secretariat
+
+
+        SELECT nom, prenom 
+        FROM employes
+        WHERE service NOT IN('production', "secretariat");
+
+        -- +----------+-------------+
+        -- | nom      | prenom      |
+        -- +----------+-------------+
+        -- | Laborde  | Jean-pierre |
+        -- | Gallet   | Clement     |
+        -- | Winter   | Thomas      |
+        -- | Grand    | Fabrice     |
+        -- | Collier  | Melanie     |
+        -- | Blanchet | Laura       |
+        -- | Miller   | Guillaume   |
+        -- | Perrin   | Celine      |
+        -- | Vignal   | Mathieu     |
+        -- | Thoyer   | Amandine    |
+        -- | Durand   | Damien      |
+        -- | Chevel   | Daniel      |
+        -- | Martin   | Nathalie    |
+        -- | Sennard  | Emilie      |
+        -- | Lafaye   | St├®phanie   |
+        -- +----------+-------------+
+
+-- 14 -- Afficher conjointement le nombre d'hommes et de femmes 
+        
+        SELECT SUM(sexe = "m") AS "homme", SUM(sexe = "f") AS "femme" FROM employes;
+          -- +-------+-------+
+          -- | homme | femme |
+          -- +-------+-------+
+          -- |    11 |     9 |
+          -- +-------+-------+
+
+        SELECT sexe, COUNT(sexe) FROM employes GROUP BY sexe;
+
+        -- +------+-------------+
+        -- | sexe | COUNT(sexe) |
+        -- +------+-------------+
+        -- | m    |          11 |
+        -- | f    |           9 |
+        -- +------+-------------+
+
+
+        SELECT CONCAT(sexe, " " , COUNT(sexe)) FROM employes GROUP BY sexe;
+
+
+        -- +---------------------------------+
+        -- | CONCAT(sexe, " " , COUNT(sexe)) |
+        -- +---------------------------------+
+        -- | m 11                            |
+        -- | f 9                             |
+        -- +---------------------------------+
+
+
+
+-- 15 -- Afficher les commerciaux ayant été recruté avant 2012, de sexe masculin et gagnant un salaire supérieur à 2500 euros
+
+        --             service                      date_embauche       sexe                    salaire
+
+
+
+        SELECT nom, prenom 
+        FROM employes
+        WHERE service = "commercial"
+        AND date_embauche < "2012-01-01"
+        AND sexe = "m"
+        AND salaire > 2500;
+
+
+        -- +--------+--------+
+        -- | nom    | prenom |
+        -- +--------+--------+
+        -- | Winter | Thomas |
+        -- +--------+--------+
+
+
+      -- les dates "2022-09-19"  "20220919" 20220919
+
+
+-- 16 -- Qui (prenom) a été embauché en dernier ?
+
+        SELECT prenom
+        FROM employes
+        ORDER BY date_embauche DESC
+        LIMIT 0,1;
+
+
+        SELECT prenom FROM employes WHERE date_embauche = (
+          SELECT MAX(date_embauche) FROM employes
+        )
+
+      SELECT MAX(date_embauche) FROM employes; -- 2017-03-01
+      SELECT prenom FROM employes WHERE date_embauche = "2017-03-01";
+        -- Stéphanie 
+
+-- 17 -- Afficher le nom et le salaire du commercial qui gagne le plus
+
+        SELECT nom, salaire 
+        FROM employes 
+        WHERE service = "commercial"
+        AND salaire = (SELECT MAX(salaire) FROM employes WHERE service = "commercial");
+
+
+
+        SELECT nom, salaire   
+        FROM employes 
+        WHERE service = "commercial"
+        ORDER BY salaire DESC
+        LIMIT 1;
+
+        -- +--------+---------+
+        -- | nom    | salaire |
+        -- +--------+---------+
+        -- | Winter |    3550 |
+        -- +--------+---------+
+
+
+
+-- 18 -- Afficher le nom et le salaire de l'employé du service direction qui gagne le moins
+
+
+        SELECT nom, salaire
+        FROM employes
+        WHERE service = "direction"
+        ORDER BY salaire 
+        LIMIT 1
+        ;
+
+        -- ou (même chose)
+        SELECT nom, salaire
+        FROM employes
+        WHERE service = "direction"
+        ORDER BY salaire ASC
+        LIMIT 0,1
+        ;
+
+
+        -- Afficher le plus bas salaire du service direction (dynamique)
+
+        SELECT MIN(salaire) FROM employes WHERE service = "direction"; --4500
+
+
+        SELECT nom, salaire
+        FROM employes 
+        WHERE service = "direction"
+        AND salaire = (SELECT MIN(salaire) FROM employes WHERE service = "direction");
+
+          -- +----------+---------+
+          -- | nom      | salaire |
+          -- +----------+---------+
+          -- | Blanchet |    4500 |
+          -- +----------+---------+
+
+
+-- 19 -- Afficher le prénom de l'informaticien ayant été recruté en premier
+
+        SELECT prenom
+        FROM employes
+        WHERE service = "informatique"
+        ORDER BY date_embauche 
+        LIMIT 1;
+
+        -- +---------+
+        -- | prenom  |
+        -- +---------+
+        -- | Mathieu |
+        -- +---------+
+
+-- 20 -- Augmenter chaque employé de 100 euros
+
+UPDATE employes SET salaire = salaire + 100;
+
+
+-- d'autres exemples :
+-- augmenter les femmes de 200e
+UPDATE employes SET salaire = salaire + 200 WHERE sexe = "f";
+-- augmenter les commerciaux de 10e
+UPDATE employes SET salaire = salaire + 10 WHERE service = "commercial";
+
+
+-- 21-- Supprimer les employés du service secretariat 
+
+DELETE FROM employes WHERE service = "secretariat";
+
