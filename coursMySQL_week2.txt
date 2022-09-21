@@ -407,3 +407,408 @@ SELECT COUNT(*),abonne_id FROM emprunt GROUP BY abonne_id;
     -- +--------+
     -- | Benoit |
     -- +--------+
+
+-------------------------------------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------------------
+            -------------------------------------------------------------------------------------------------------
+                -------------------------------------------------------------------------------------------------------
+                    -------------------------------------------------------------------------------------------------------
+
+
+
+    -- LES JOINTURES
+
+
+    -- Afficher les dates de sorties et de rendues de l'abonné guillaume (prenom/date_sortie/date_rendue)
+
+    SELECT abonne.prenom, emprunt.date_sortie, emprunt.date_rendue
+    FROM abonne, emprunt
+    WHERE abonne.id_abonne = emprunt.abonne_id
+    AND abonne.prenom = "guillaume";
+
+
+    -- +-----------+-------------+-------------+
+    -- | prenom    | date_sortie | date_rendue |
+    -- +-----------+-------------+-------------+
+    -- | Guillaume | 2016-12-07  | 2016-12-11  |
+    -- | Guillaume | 2016-12-15  | 2016-12-30  |
+    -- +-----------+-------------+-------------+
+
+
+    SELECT a.prenom, e.date_sortie, e.date_rendue
+    FROM abonne a, emprunt e
+    WHERE a.id_abonne = e.abonne_id
+    AND a.prenom = "guillaume";
+
+
+    -- Jointure et requête imbriquée
+    -- Une jointure et une imbrication permettent de faire des requêtes sur plusieurs tables (en relation)
+    -- Mais il y a une différence :
+    -- imbrication n'affiche que les champs d'une seule table
+    -- jointure peut afficher les champs provenant de différentes tables (fusionner)
+
+
+    SELECT date_sortie, date_rendue FROM emprunt WHERE abonne_id IN(
+        SELECT id_abonne FROM abonne WHERE prenom = "guillaume"
+    );
+
+    -- +-------------+-------------+
+    -- | date_sortie | date_rendue |
+    -- +-------------+-------------+
+    -- | 2016-12-07  | 2016-12-11  |
+    -- | 2016-12-15  | 2016-12-30  |
+    -- +-------------+-------------+
+
+
+
+    -- JOINTURE IMPLICITE (SANS JOIN)
+    SELECT a.prenom, e.date_sortie, e.date_rendue -- les champs qu'on souhaite afficher mais il faut définir dans quelle table le champ se trouve table.champ ou alias.table
+    FROM abonne a, emprunt e                       -- Informer le nom des tables, avec possibilité de lui définir un alias (unique)   syntaxe NomDeLaTable nomDeL'Alias
+    WHERE a.id_abonne = e.abonne_id                -- la relation, les champs (PK-FK) en commum qui permettent la jointure     
+    AND a.prenom = "guillaume";                    -- précision de la requête
+
+
+
+
+
+
+
+
+
+    -- Afficher les mouvements des livres écrit par Alphonse DAUDET  (jointure implicite)
+    -- auteur / titre / date_sortie / date_rendue
+
+
+    SELECT l.auteur, l.titre, e.date_sortie, e.date_rendue
+    FROM livre l, emprunt e 
+    WHERE l.id_livre = e.livre_id 
+    AND l.auteur = "alphonse daudet";
+
+
+    -- +-----------------+----------------+-------------+-------------+
+    -- | auteur          | titre          | date_sortie | date_rendue |
+    -- +-----------------+----------------+-------------+-------------+
+    -- | ALPHONSE DAUDET | Le Petit chose | 2016-12-12  | 2016-12-22  |
+    -- +-----------------+----------------+-------------+-------------+
+
+
+    -- JOINTURE EXPLICITE (AVEC JOIN)
+
+    SELECT l.auteur, l.titre, e.date_sortie, e.date_rendue
+    FROM livre l
+    INNER JOIN emprunt e
+    ON l.id_livre = e.livre_id
+    AND l.auteur = "alphonse daudet";
+
+
+    -- pas d'obligation de définir la table du champ / alias (attention si même champ dans les 2 tables)
+    SELECT auteur, titre, date_sortie, date_rendue
+    FROM livre 
+    INNER JOIN emprunt 
+    ON id_livre = livre_id
+    AND auteur = "alphonse daudet";
+
+
+
+    -- il existe différents types de jointure (INNER JOIN, RIGHT JOIN, LEFT JOIN, ......)
+    -- on appelle une table avec FROM
+    -- et on joint la seconde table avec le terme "... JOIN"
+    -- pour définir la relation entre les 2 tables (PK = FK) on utilise le terme ON
+
+
+    -- INNER JOIN, la condition est vraie entre les 2 table id_abonne = abonne_id
+    -- exemple, un emprunt où abonne_id est null
+    -- SELECT prenom, date_sortie, date_rendue
+    -- FROM abonne
+    -- INNER JOIN emprunt 
+    -- ON id_abonne = abonne_id;
+
+
+
+    
+    -- qui a emprunté le livre "une vie" sur l'année 2016
+    -- prenom / auteur / titre / date_sortie / date_rendue
+
+
+    -- JOINTURE IMPLICITE
+    SELECT a.prenom, c.auteur, c.titre, b.date_sortie, b.date_rendue
+    FROM abonne a, emprunt b, livre c 
+    WHERE a.id_abonne = b.abonne_id 
+    AND c.id_livre = b.livre_id
+    AND c.titre = "une vie"
+    AND b.date_sortie LIKE "2016%";
+
+
+    -- JOINTURE EXPLICITE
+
+    SELECT a.prenom, c.auteur, c.titre, b.date_sortie, b.date_rendue
+    FROM abonne a 
+    INNER JOIN emprunt b
+    ON a.id_abonne = b.abonne_id 
+    INNER JOIN livre c 
+    ON b.livre_id = c.id_livre 
+    AND c.titre = "une vie"
+    AND b.date_sortie LIKE "2016%";
+
+    -- ou 
+
+    SELECT a.prenom, c.auteur, c.titre, b.date_sortie, b.date_rendue
+    FROM abonne a 
+    INNER JOIN emprunt b
+    INNER JOIN livre c 
+    ON a.id_abonne = b.abonne_id 
+    AND b.livre_id = c.id_livre 
+    WHERE c.titre = "une vie" 
+    AND b.date_sortie LIKE "2016%";
+
+
+    -- sur la "précision" on peut définir AND ou WHERE
+    -- pour rappel, il n'y a qu'un WHERE par requete
+
+
+
+    -- requête sur 3 tables
+    -- 2 jointures :
+    --    - entre emprunt et abonne
+    --    - entre emprunt et livre 
+   
+
+    -- +-----------+-------------------+---------+-------------+-------------+
+    -- | prenom    | auteur            | titre   | date_sortie | date_rendue |
+    -- +-----------+-------------------+---------+-------------+-------------+
+    -- | Guillaume | GUY DE MAUPASSANT | Une vie | 2016-12-07  | 2016-12-11  |
+    -- | Chloe     | GUY DE MAUPASSANT | Une vie | 2016-12-11  | 2016-12-19  |
+    -- +-----------+-------------------+---------+-------------+-------------+
+
+
+
+
+
+    -- Afficher le nombre de livres emprunté par chaque abonné
+    -- prenom | nombre
+
+
+
+    -- INDICE
+    -- SELECT COUNT(*), abonne_id FROM emprunt GROUP BY abonne_id;
+
+
+
+    -- implicite
+
+    -- table.champ / alias non obligatoire
+
+    SELECT a.id_abonne AS "ID de l'abonné", a.prenom, COUNT(*) AS "Nombre de livres"
+    FROM emprunt e, abonne a 
+    WHERE a.id_abonne = e.abonne_id 
+    GROUP BY e.abonne_id 
+    ORDER BY COUNT(*); 
+
+
+-- +----------------+-----------+------------------+
+-- | ID de l'abonn? | prenom    | Nombre de livres |
+-- +----------------+-----------+------------------+
+-- |              4 | Laura     |                1 |
+-- |              1 | Guillaume |                2 |
+-- |              3 | Chloe     |                2 |
+-- |              2 | Benoit    |                3 |
+-- +----------------+-----------+------------------+
+
+
+--   SELECT 
+--     a.prenom, 
+--     b.nb
+--   FROM abonne a, 
+
+--       (SELECT abonne_id, COUNT(*) nb FROM emprunt GROUP BY abonne_id) b
+
+--   WHERE a.id_abonne = b.abonne_id
+-- ;
+
+
+
+
+
+    -- explicite
+
+    SELECT prenom, COUNT(*) AS 'nombre_emprunt'
+    FROM emprunt
+    INNER JOIN abonne
+    ON id_abonne = abonne_id 
+    GROUP BY abonne_id 
+    ORDER BY nombre_emprunt DESC;
+
+    
+    SELECT prenom, COUNT(*) 
+    FROM emprunt
+    INNER JOIN abonne
+    ON id_abonne = abonne_id 
+    GROUP BY abonne_id 
+    ORDER BY COUNT(*) DESC;
+
+    -- L'alias, une fois créé, peut être considéré comme un "champ", Attention du coup pas de quotes
+
+    -- +-----------+--------+
+    -- | prenom    | nombre |
+    -- +-----------+--------+
+    -- | Benoit    |      3 |
+    -- | Guillaume |      2 |
+    -- | Chloe     |      2 |
+    -- | Laura     |      1 |
+    -- +-----------+--------+
+
+
+
+
+
+
+
+
+
+    ------------------------------------------------------------------
+    
+
+    SELECT a.prenom, c.auteur, c.titre, b.date_sortie, b.date_rendue
+    FROM abonne a, emprunt b, livre c 
+    WHERE a.id_abonne = b.abonne_id 
+    AND c.id_livre = b.livre_id;
+
+
+-- +-----------+-------------------+-------------------------+-------------+-------------+
+-- | prenom    | auteur            | titre                   | date_sortie | date_rendue |
+-- +-----------+-------------------+-------------------------+-------------+-------------+
+-- | Guillaume | GUY DE MAUPASSANT | Une vie                 | 2016-12-07  | 2016-12-11  |
+-- | Guillaume | ALEXANDRE DUMAS   | La Reine Margot         | 2016-12-15  | 2016-12-30  |
+-- | Benoit    | GUY DE MAUPASSANT | Bel-Ami                 | 2016-12-07  | 2016-12-18  |
+-- | Benoit    | ALEXANDRE DUMAS   | Les Trois Mousquetaires | 2017-01-02  | 2017-01-15  |
+-- | Benoit    | GUY DE MAUPASSANT | Une vie                 | 2017-02-20  | NULL        |
+-- | Chloe     | GUY DE MAUPASSANT | Une vie                 | 2016-12-11  | 2016-12-19  |
+-- | Chloe     | ALEXANDRE DUMAS   | Les Trois Mousquetaires | 2017-02-15  | NULL        |
+-- | Laura     | ALPHONSE DAUDET   | Le Petit chose          | 2016-12-12  | 2016-12-22  |
+-- +-----------+-------------------+-------------------------+-------------+-------------+
+
+
+--------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------
+
+
+I - Modélisation de la bdd
+II - Création de la bdd
+III - Insertion de données ==> requêtes
+-----------------------------------------
+
+I - Énoncé : bijouterie
+
+MODULE 1 : utilisateur 
+
+- Un utilisateur peut s'inscrire 
+- Un utilisateur n'a qu'une seule adresse de facturation
+- un utilisateur peut avoir plusieurs adresses de livraison
+- un utilisateur peut écrire des commentaires sur les produits
+- un utilisateur peut passer plusieurs commandes
+
+
+MODULE 2 : produit
+
+- un produit appartient à une catégorie
+- un produit appartient à une marque
+- un produit peut être composé de plusieurs matières (/ couleur)
+- un produit appartient à un genre (valeur : homme, femme, enfant, unisexe)
+- un produit peut avoir plusieurs images
+
+
+MODULE 3 : Commande
+
+- dans le panier, on a plusieurs produits, chacun avec une quantité 
+- le nombre de produits dans la commande est flexible (au minimum un produit)
+- une commande a un etat (en cours de traitement, expédié, livré, retour ...)
+- on peut utiliser des codes promos
+
+
+
+--------------------------------------------------------------------------
+USER
+- id_user INT(11) AI PK NOT NULL
+- email VARCHAR(255) NOT NULL
+- mdp VARCHAR(255) NOT NULL
+- roles ENUM("user", "admin", "modo")
+- nom VARCHAR(255) NOT NULL
+- prenom VARCHAR(255) NOT NULL
+- sexe ENUM("m", "f")
+- adresse VARCHAR(255) NOT NULL
+- complement VARCHAR(255) NULL
+- cp INT(5) NOT NULL
+- ville VARCHAR(255) NOT NULL
+- pays VARCHAR(255) NOT NULL
+- telephone VARCHAR(255) NOT NULL
+- date_naissance DATETIME NOT NULL
+- date_inscription DATETIME NOT NULL
+
+(un user peut avoir plusieurs adresses de livraison mais une adresse appartient à un user)
+ADRESSE_LIVRAISON
+- id_adresse INT(11) AI PK NOT NULL
+- user_id INT(11) FK (user.id_user) NULL
+- nom VARCHAR(255) NOT NULL
+- prenom VARCHAR(255) NOT NULL
+- adresse VARCHAR(255) NOT NULL
+- complement VARCHAR(255) NULL
+- cp INT(5) NOT NULL
+- ville VARCHAR(255) NOT NULL
+- pays VARCHAR(255) NOT NULL
+- telephone VARCHAR(255) NOT NULL
+- digicode VARCHAR(255) NULL
+- commentaire TEXT NULL
+
+----------------------------------------------------------------------------------------------------------------
+
+PRODUIT
+- id_produit INT(11) AI PK NOT NULL
+- nom VARCHAR(255) NOT NULL
+- prix FLOAT NOT NULL
+- remise INT(2) NULL
+- description TEXT NULL
+- quantite INT(11) NOT NULL
+- genre ENUM('homme', "femme", "enfant", "unisexe")
+- activation BOOLEAN
+- date_creation DATETIME NOT NULL
+- categorie_id INT(11) FK (categorie.id_categorie)
+- marque_id INT(11) FK (marque.id_marque)
+
+(Une catégorie peut regrouper plusieurs produits mais chaque produit appartient à une categorie)
+CATEGORIE
+- id_categorie INT(11) AI PK NOT NULL
+- nom VARCHAR(255) NOT NULL
+- description TEXT NULL
+
+
+(Une marque peut regrouper plusieurs produits mais chaque produit appartient à une marque)
+MARQUE
+- id_marque INT(11) AI PK NOT NULL
+-VARCHAR(255) NOT NULL
+- contact VARCHAR(255) NOT NULL
+- email VARCHAR(255) NOT NULL
+- telephone VAzRCHAR(255) NOT NULL
+- description TEXT NULL
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
