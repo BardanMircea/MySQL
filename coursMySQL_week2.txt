@@ -706,6 +706,7 @@ MODULE 1 : utilisateur
 - un utilisateur peut avoir plusieurs adresses de livraison
 - un utilisateur peut écrire des commentaires sur les produits
 - un utilisateur peut passer plusieurs commandes
+- un utilisateur peut donner une note sur un produit 
 
 
 MODULE 2 : produit
@@ -725,7 +726,7 @@ MODULE 3 : Commande
 - on peut utiliser des codes promos
 
 
-
+il reste les notes et le code promo 
 --------------------------------------------------------------------------
 USER
 - id_user INT(11) AI PK NOT NULL
@@ -735,17 +736,12 @@ USER
 - nom VARCHAR(255) NOT NULL
 - prenom VARCHAR(255) NOT NULL
 - sexe ENUM("m", "f")
-- adresse VARCHAR(255) NOT NULL
-- complement VARCHAR(255) NULL
-- cp INT(5) NOT NULL
-- ville VARCHAR(255) NOT NULL
-- pays VARCHAR(255) NOT NULL
-- telephone VARCHAR(255) NOT NULL
 - date_naissance DATETIME NOT NULL
 - date_inscription DATETIME NOT NULL
+- adresse_facturation_id INT(11) FK (adresse.id_adresse) NULL
 
-(un user peut avoir plusieurs adresses de livraison mais une adresse appartient à un user)
-ADRESSE_LIVRAISON
+(un user peut avoir plusieurs adresses mais une adresse appartient à un user)
+ADRESSE
 - id_adresse INT(11) AI PK NOT NULL
 - user_id INT(11) FK (user.id_user) NULL
 - nom VARCHAR(255) NOT NULL
@@ -784,31 +780,154 @@ CATEGORIE
 (Une marque peut regrouper plusieurs produits mais chaque produit appartient à une marque)
 MARQUE
 - id_marque INT(11) AI PK NOT NULL
--VARCHAR(255) NOT NULL
+- nom VARCHAR(255) NOT NULL
 - contact VARCHAR(255) NOT NULL
 - email VARCHAR(255) NOT NULL
 - telephone VAzRCHAR(255) NOT NULL
 - description TEXT NULL
 
+(Une matière peut être dans plusieurs produits, mais un produit peut être composé de plusieurs matières)
+MATIERE
+- id_matiere INT(11) AI PK NOT NULL
+- nom VARCHAR(255) NOT NULL
+
+
+PRODUIT_MATIERE (table de jointure)
+- produit_id INT(11) FK (produit.id_produit) NULL
+- matiere_id INT(11) FK (matiere.id_matiere) NULL
+
+(Une image n'appartient qu'à un seul produit, mais chaque produit peut avoir plusieurs images)
+IMAGE
+- id_image INT(11) AI PK NOT NULL
+- src VARCHAR(255) NOT NULL
+- alt TEXT NOT NULL
+- title VARCHAR(255) NOT NULL
+- produit_id INT(11) FK (produit.id_produit) NULL
+
+
+(Un commentaire n'appartient qu'à un seul user, chaque user peut écrire plusieurs commentaires)
+(Un commentaire n'appartient qu'à un seul produit, chaque produit peut avoir plusieurs commentaires)
+COMMENTAIRE
+- id_commentaire INT(11) AI PK NOT NULL
+- user_id INT(11) FK (user.id_user) NULL
+- produit_id INT(11) FK (produit.id_produit) NULL
+- message TEXT NULL
+- date_creation DATETIME NOT NULL
+
+-----------------------------------------------------------------------------------------------------------
+(Une commande est passée par un user, chaque user peut passer plusieurs commandes)
+(Une commande n'a qu'une seule adresse de facturation, Cette adresse de facturation n'appartient qu'à une seule commande)
+(Une commande n'a qu'une seule adresse de livraison, Cette adresse de livraison n'appartient qu'à une seule commande)
+(une commande ne peut avoir qu'un seul code promo mais un code promo peut apparaître sur plusieurs commandes)
+COMMANDE
+- id_commande INT(11) AI PK NOT NULL
+- user_id INT(11) FK (user.id_user) NULL
+- date_creation DATETIME NOT NULL
+- montant DOUBLE NOT NULL
+- etat ENUM('en cours de traitement', 'expédié', 'livré', 'retour', 'annulé')
+- adresse_livraison_commande_id INT(11) FK (adresse_livraison_commande.id_adresse_livraison_commande)
+- adresse_facturation_commande_id INT(11) FK (adresse_facturation_commande.id_adresse_facturation_commande)
+- code_promo_id INT(11) FK (code_promo.id_code_promo) NULL
+
+
+
+
+
+(un détail commande appartient à la commande, et une commande peut avoir plusieurs détails commandes)
+(un détail commande ne conserne qu'un seul produit, chaque produit peut se trouver dans plusieurs details commande)
+DETAILS_COMMANDE
+- id_details_commande INT(11) AI PK NOT NULL
+- commande_id INT(11) FK (commande.id_commande) NULL
+- produit_id INT(11) FK (produit.id_produit) NULL
+- quantite INT(11) NOT NULL
+- prix DOUBLE NOT NULL
+- remise INT(2) NOT NULL
 
 
 
 
 
 
+(Une adresse de livraison appartient à une commande, et une commande a une seule adresse de livraison)
+ADRESSE_LIVRAISON_COMMANDE
+- id_adresse_livraison_commande INT(11) AI PK NOT NULL
+- nom VARCHAR(255) NOT NULL
+- prenom VARCHAR(255) NOT NULL
+- adresse VARCHAR(255) NOT NULL
+- complement VARCHAR(255) NULL
+- cp INT(5) NOT NULL
+- ville VARCHAR(255) NOT NULL
+- pays VARCHAR(255) NOT NULL
+- telephone VARCHAR(255) NOT NULL
+- digicode VARCHAR(255) NULL
+- commentaire TEXT NULL
+- commande_id INT(11) FK (commande.id_commande) NULL
 
 
 
 
 
 
+(Une adresse de facturation appartient à une commande, et une commande a une seule adresse de facturation)
+ADRESSE_FACTURATION_COMMANDE
+- id_adresse_facturation_commande INT(11) AI PK NOT NULL
+- nom VARCHAR(255) NOT NULL
+- prenom VARCHAR(255) NOT NULL
+- adresse VARCHAR(255) NOT NULL
+- complement VARCHAR(255) NULL
+- cp INT(5) NOT NULL
+- ville VARCHAR(255) NOT NULL
+- pays VARCHAR(255) NOT NULL
+- telephone VARCHAR(255) NOT NULL
+- commande_id INT(11) FK (commande.id_commande) NULL
 
 
 
 
 
 
+----------------------------------------------------------------------------------------
+
+CODE_PROMO
+- id_code_promo INT(11) AI PK NOT NULL
+- code VARCHAR(255) NOT NULL
+- valeur ENUM('pourcentage', "euro")
+- remise DOUBLE 
+
+- date_boolean BOOLEAN 
+- date_debut DATE NULL
+- date_fin DATE NULL
+
+- montant_boolean BOOLEAN 
+- montant_min
+- montant_max
 
 
+- activation BOOLEAN
+
+- image VARCHAR(255) NULL
+- description TEXT NULL
+- limitation INT NULL
 
 
+-----------------------------------------------------
+NE PAS FAIRE 
+- limitation par user (de ses commandes)
+- quantité du produit ?
+- cumuler les codes promos 
+- application sur la commande ou sur un produit
+- relation user
+- relation produit / categorie
+
+
+--------------------------------------------------
+toutes les relations sont null
+
+conseil :
+
+créer toutes les tables
+créer tous les champs relationnelles
+créer le FK
+
+si je supprime un produit, est-ce intéressant de conserver ses images ???
+nom des tables en minuscule sans accent camelcase ou _ 
